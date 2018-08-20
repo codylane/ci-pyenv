@@ -8,7 +8,7 @@ A bash wrapper for python development projects to initialize pyenv in a CI envir
 Usage
 -----
 
-# Prep
+## Prep
 
 ```
 git clone git@github.com:codylane/ci-pyenv.git .ci
@@ -18,7 +18,7 @@ rm -rf .ci/.git
 * All further commands assume that you are in your project root, relative to the `.ci` directory.
 
 
-# Initalize a new virtualenv
+## Initalize a new virtualenv
 
 * This creates a virtualenv project named `my-special-project`
 * With python `2.7.15`
@@ -50,7 +50,7 @@ VENV_PYTHON: 2.7.15
 (my-special-project-2.7.15)
 ```
 
-# Running a single add-hoc command inside the virtualenv without activating it
+## Running a single add-hoc command inside the virtualenv without activating it
 
 * Runs the command `pip list` inside the virtualenv
 
@@ -71,6 +71,17 @@ Package    Version
 pip        18.0   
 setuptools 40.1.0 
 wheel      0.31.
+```
+
+## How to initalize multiple versions of python
+
+1. Execute [Initalize a new virtualenv](#initalize-a-new-virtualenv)
+2. Update `.ci/init-pyenv`
+
+* TODO
+
+```
+
 ```
 
 TODO
