@@ -1,6 +1,10 @@
 # ci-pyenv
 A bash wrapper for python development projects to initialize pyenv in a CI environment
 
+# Homepage
+
+* - https://github.com/codylane/ci-pyenv
+
 Usage
 -----
 
@@ -69,3 +73,22 @@ setuptools 40.1.0
 wheel      0.31.
 ```
 
+TODO
+----
+
+* Figure out to test this and write automatted tests. I'll probably use [bats](https://github.com/sstephenson/bats)
+
+License
+-------
+
+* MIT
+
+Author
+------
+
+* Cody Lane - 2018
+
+Contributing
+------------
+
+* Contributions and ideas are encouraged.
