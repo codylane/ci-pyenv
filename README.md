@@ -88,6 +88,7 @@ TODO
 ----
 
 * Figure out to test this and write automatted tests. I'll probably use [bats](https://github.com/sstephenson/bats)
+* Figure out how to install and setup multiple versions of python.
 
 License
 -------
