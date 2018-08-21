@@ -17,7 +17,6 @@ rm -rf .ci/.git
 
 * All further commands assume that you are in your project root, relative to the `.ci` directory.
 
-
 ## Initialize a new virtualenv
 
 * This creates a virtualenv project named `my-special-project`
@@ -27,8 +26,13 @@ rm -rf .ci/.git
 * If you have a `setup.py` file in the project root directory then `enable-pyenv` will `pip install -e .` into your virtualenv.
 
 * Before we can initialize a new pyenv virtualenv we have to first tell it what the name of our project is and what python to use.
+
 ```
-sed -i.bak -e 's/%%PROJECT_NAME%%/my-special-project/g' -e 's/%%PROJECT_PYTHON%%/2.7.15/g' .ci/enable-pyenv
+cat > .ci-pyenv <<EOF
+CI_PYENV_PROJECT_NAME="my-special-project"
+CI_PYENV_PROJECT_PYTHON="2.7.15"
+EOF
+
 .ci/init-pyenv
 ```
 
@@ -68,27 +72,57 @@ VENV_PYTHON: 2.7.15
 
 Package    Version
 ---------- -------
-pip        18.0   
-setuptools 40.1.0 
-wheel      0.31.
+pip        18.0
+setuptools 40.1.0
+wheel      0.31.1
 ```
 
-## How to initalize multiple versions of python
+## How to initialize multiple versions of python
 
-1. Execute [Initalize a new virtualenv](#initalize-a-new-virtualenv)
-2. Update `.ci/init-pyenv`
-
-* TODO
+* Execute [Initialize a new virtualenv](#initialize-a-new-virtualenv)
+* First create a `.ci-pyenv` in the project root directory.
 
 ```
+cat > .ci-pyenv <<EOF
+CI_PYENV_PROJECT_NAME="my-special-project"
+CI_PYENV_PROJECT_PYTHON="2.7.15"
 
+install-these-pythons() {
+
+install-pyenv-python "3.6.5"
+install-pyenv-python "3.6.6" "PERSIST"
+
+}
+EOF
+```
+
+* Run `.ci/init-pyenv`
+
+The end result is the following:
+
+* virtualenv name `my-special-project`
+* virtualenv python `2.7.15`
+* Python `3.6.5` is installed but NOT added to the `.python-version`
+* Python `3.6.6` is installed and added to the `.python-version`
+
+#### `cat .python-version`
+
+```
+my-special-project-2.7.15
+3.6.6
+```
+
+#### `pyenv versions | grep '^\*'`
+
+```
+* 3.6.6 (set by /tmp/test/.python-version)
+* my-special-project-2.7.15 (set by /tmp/test/.python-version)
 ```
 
 TODO
 ----
 
 * Figure out to test this and write automatted tests. I'll probably use [bats](https://github.com/sstephenson/bats)
-* Figure out how to install and setup multiple versions of python.
 
 License
 -------

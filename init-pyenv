@@ -48,4 +48,6 @@ rm -f .python-version
 # install the virtualenv
 create-pyenv-virtualenv "${VENV_PYTHON}"
 
+type -t install-these-pythons && install-these-pythons
+
 pyenv versions
