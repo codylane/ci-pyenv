@@ -47,46 +47,96 @@ BIN_DIR="${PWD}"
 cd ${BIN_DIR}/..
 PRJ_ROOT_DIR="${PWD}"
 
+[ -f .ci-pyenv ] && . .ci-pyenv
+
 export PYENV_ROOT="${HOME}/.pyenv"
 export PATH="${PYENV_ROOT}/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:${PATH}"
 export BIN_DIR="${BIN_DIR}"
 export PRJ_ROOT_DIR
-export VENV_NAME="%%PROJECT_NAME%%"
-export VENV_PYTHON="%%PROJECT_PYTHON%%"
-export VENV_NAME_VERSION="${VENV_NAME}-${VENV_PYTHON}"
+export VENV_NAME="${CI_PYENV_PROJECT_NAME:-%%PROJECT_NAME%%}"
+export VENV_PYTHON="${CI_PYENV_PROJECT_PYTHON:-%%PROJECT_PYTHON%%}"
+
+
+info() {
+  echo "INFO: $*"
+}
 
 
 warn() {
   echo "WARNING: $*"
 }
 
-create-pyenv-virtualenv() {
+
+uninstall-pyenv-python() {
   local PY_VERSION="${1}"
+  local VENV_NAME_VERSION="${VENV_NAME}-${PY_VERSION}"
   [ -z "$PY_VERSION" ] && warn "create-pyenv-virtualenv requires an argument"
 
-  install-pyenv-python "${PY_VERSION}"
-
+  info "Uninstalling virtualenv: ${VENV_NAME_VERSION}"
   pyenv uninstall -f "${VENV_NAME_VERSION}"
+}
+
+
+persist-python() {
+  local PY_VERSION="${1}"
+  [ -z "$PY_VERSION" ] && warn "persist-python requires an argument"
+
+  info "Persisting python: ${PY_VERSION}"
+  grep -q ${PY_VERSION} .python-version 2>>/dev/null || echo "${PY_VERSION}" >> .python-version
+}
+
+create-pyenv-virtualenv() {
+  local PY_VERSION="${1}"
+  local VENV_NAME_VERSION="${VENV_NAME}-${PY_VERSION}"
+  [ -z "$PY_VERSION" ] && warn "create-pyenv-virtualenv requires an argument"
+
+  info "Creating new virtualenv project: ${VENV_NAME_VERSION}"
+
+  install-pyenv-python "${PY_VERSION}"
+  uninstall-pyenv-python "${PY_VERSION}"
+
+  info "pyenv virtualenv '${PY_VERSION}' '${VENV_NAME_VERSION}'"
 
   pyenv virtualenv "${PY_VERSION}" "${VENV_NAME_VERSION}"
 
-  pyenv local ${VENV_NAME_VERSION}
+  persist-python "${VENV_NAME_VERSION}"
 
-  pip install --upgrade pip
-  [ -e "test-requirements.txt" ] && pip install -r test-requirements.txt || true
-  [ -e "setup.py" ] && pip install -e . || true
-  pip list
-
-  pyenv rehash
-
+  install-deps-into-python "${PY_VERSION}"
 }
 
 
 install-pyenv-python() {
   local PY_VERSION="${1}"
-  [ -z "$PY_VERSION" ] && warn "create-pyenv-virtualenv requires an argument"
+  local PERSIST="${2}"
+  [ -z "$PY_VERSION" ] && warn "install-pyenv-python requires an argument"
 
+  info "Installing python: ${PY_VERSION}"
   [ -d "${PYENV_ROOT}/versions/${PY_VERSION}" ] || pyenv install ${PY_VERSION}
+
+  [ -n "${PERSIST}" ] && persist-python "${PY_VERSION}" || true
+}
+
+
+install-deps-into-python() {
+  local PY_VERSION="${1}"
+  [ -z "$PY_VERSION" ] && warn "install-deps-into-python requires an argument"
+
+  info "Upgrading pip"
+  pip install --upgrade pip
+
+  if [ -e "test-requirements.txt" ]; then
+    info "Installing test-requirements.txt into python: ${PY_VERSION}"
+    pip install -r test-requirements.txt || true
+  fi
+
+  if [ -e "setup.py" ]; then
+    info "Invoking setup.py and installing into python: ${PY_VERSION}"
+    pip install -e . || true
+  fi
+
+  pip list
+
+  pyenv rehash
 }
 
 
@@ -96,7 +146,6 @@ display-vars() {
   echo "PRJ_ROOT_DIR: ${PRJ_ROOT_DIR}"
   echo "PYENV_ROOT: ${PYENV_ROOT}"
   echo "VENV_NAME: ${VENV_NAME}"
-  echo "VENV_NAME_VERSION: ${VENV_NAME_VERSION}"
   echo "VENV_PYTHON: ${VENV_PYTHON}"
 }
 
@@ -107,7 +156,6 @@ validate-required-vars() {
   [ -z "$PYENV_ROOT" ] && warn "Please set PYENV_ROOT" || true
   [ -z "${VENV_NAME}" ] && warn "Please set VENV_NAME" || true
   [ -z "${VENV_PYTHON}" ] && warn "Please set VENV_PYTHON" || true
-  [ -z "${VENV_NAME_VERSION}" ] && warn "Please set VENV_NAME_VERSION" || true
 }
 
 
@@ -115,6 +163,7 @@ validate-required-vars() {
 
 echo "INFO: running in directory $PRJ_ROOT_DIR"
 display-vars
+
 
 validate-required-vars
 

@@ -43,6 +43,8 @@ CMD="${BASH_SOURCE[0]}"
 BIN_DIR="${CMD%/*}"
 . "${BIN_DIR}/enable-pyenv"
 
+rm -f .python-version
+
 # install the virtualenv
 create-pyenv-virtualenv "${VENV_PYTHON}"
 
