@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/codylane/ci-pyenv.svg?branch=master)](https://travis-ci.org/codylane/ci-pyenv)
+
 # ci-pyenv
 A bash wrapper for python development projects to initialize pyenv in a CI environment
 
