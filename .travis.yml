@@ -15,10 +15,9 @@ matrix:
       cache: pip
 
 script:
-  - mkdir -p test/
-  - ln -sf . test/.ci
+  - mkdir -p test/; cd test; ln -s .. .ci
   - echo "CI_PYENV_PROJECT_NAME=my-special-project" > .ci-pyenv
   - echo "CI_PYENV_PROJECT_PYTHON=2.7.15" >> .ci-pyenv
-  - cd test; .ci/init-pyenv
-  - cd test; .ci/run-pyenv pip list
-  - cd test; .ci/run-pyenv pyenv versions
+  - .ci/init-pyenv
+  - .ci/run-pyenv pip list
+  - .ci/run-pyenv pyenv versions
