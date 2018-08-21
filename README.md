@@ -18,7 +18,7 @@ rm -rf .ci/.git
 * All further commands assume that you are in your project root, relative to the `.ci` directory.
 
 
-## Initalize a new virtualenv
+## Initialize a new virtualenv
 
 * This creates a virtualenv project named `my-special-project`
 * With python `2.7.15`
@@ -26,7 +26,7 @@ rm -rf .ci/.git
 * If you have a `test-requirements.txt` file in the project root directory then `enable-pyenv` will install those requirements into your virtualenv.
 * If you have a `setup.py` file in the project root directory then `enable-pyenv` will `pip install -e .` into your virtualenv.
 
-* Before we can initalize a new pyenv virtualenv we have to first tell it what the name of our project is and what python to use.
+* Before we can initialize a new pyenv virtualenv we have to first tell it what the name of our project is and what python to use.
 ```
 sed -i.bak -e 's/%%PROJECT_NAME%%/my-special-project/g' -e 's/%%PROJECT_PYTHON%%/2.7.15/g' .ci/enable-pyenv
 .ci/init-pyenv
