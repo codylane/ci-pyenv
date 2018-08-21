@@ -3,7 +3,7 @@ A bash wrapper for python development projects to initialize pyenv in a CI envir
 
 # Homepage
 
-* - https://github.com/codylane/ci-pyenv
+* https://github.com/codylane/ci-pyenv
 
 Usage
 -----
