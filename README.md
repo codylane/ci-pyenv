@@ -3,6 +3,9 @@
 # ci-pyenv
 A bash wrapper for python development projects to initialize pyenv in a CI environment
 
+# Deprecated as of 12-8-2018
+* This project is now deprecated because I'm switching to a cross platform tool [miniconda](https://conda.io/docs/)
+
 # Homepage
 
 * https://github.com/codylane/ci-pyenv
